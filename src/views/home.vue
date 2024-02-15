@@ -1,80 +1,80 @@
-<!-- Home.vue -->
-
 <template>
-  <div class="home-container">
-    <div class="background-image">
-      <div class="content">
-        <h1>Bienvenue sur l'Application Météo</h1>
-        <div class="weather-info">
-          <SearchBar @search="handleSearch" />
-          <CurrentWeather v-if="currentWeather" :weatherData="currentWeather" />
-        </div>
-      </div>
+  <div>
+    <input type="text" v-model="city" placeholder="Rechercher une ville" />
+    <button @click="searchWeather">Rechercher</button>
+
+    <div v-if="weatherData">
+      <h2>{{ weatherData.name }}</h2>
+      <p>{{ weatherData.weather[0].description }}</p>
+      <p>Température: {{ weatherData.main.temp }}°C</p>
+      <p>Humidité: {{ weatherData.main.humidity }}%</p>
+      <p>Vitesse du vent: {{ weatherData.wind.speed }} km/h</p>
+    </div>
+
+    <div v-if="forecastData">
+      <h3>Prévisions pour les prochains jours :</h3>
+      <ul>
+        <li v-for="forecast in forecastData.list" :key="forecast.dt">
+          <p>{{ formatDate(forecast.dt) }}</p>
+          <p>{{ forecast.weather[0].description }}</p>
+          <p>Température: {{ forecast.main.temp }}°C</p>
+          <p>Humidité: {{ forecast.main.humidity }}%</p>
+          <p>Vitesse du vent: {{ forecast.wind.speed }} km/h</p>
+        </li>
+      </ul>
+    </div>
+
+    <div v-for="cityName in cities" :key="cityName">
+      <button @click="searchWeatherByCity(cityName)">{{ cityName }}</button>
     </div>
   </div>
 </template>
 
 <script>
-
+import axios from 'axios';
 
 export default {
+   name:'HomeWiew',
   data() {
-     name: 'home';
     return {
-      currentWeather: null,
+      city: '',
+      weatherData: null,
+      forecastData: null,
+    
     };
   },
   methods: {
-    handleSearch(city) {
-      // Exemple fictif : Mettre à jour les données météorologiques pour la ville spécifiée
-      this.currentWeather = {
-        name: city,
-        main: {
-          temp: 25,
-          humidity: 60,
-        },
-        weather: [
-          {
-            description: 'Ensoleillé',
-          },
-        ],
-      };
+    searchWeather() {
+      const apiKey = 'a42e8a606f13ac47dddfd232d6a00eb4';
+      axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${this.city}&appid=a42e8a606f13ac47dddfd232d6a00eb4&units=metric`)
+        .then(response => {
+          this.weatherData = response.data;
+          console.log(response.data)
+        })
+        .catch(error => {
+          console.log(error);
+        });
+
+      axios.get(`https://api.openweathermap.org/data/2.5/forecast?q=${this.city}&appid=${apiKey}&units=metric`)
+        .then(response => {
+          this.forecastData = response.data;
+          
+        })
+        .catch(error => {
+          console.log(error);
+        });
     },
-  },
+    formatDate(timestamp) {
+      const date = new Date(timestamp * 1000);
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+     
+      return `${day}/${month}`;
+    },
+    searchWeatherByCity(cityName) {
+      this.city = cityName;
+      this.searchWeather();
+    }
+  }
 };
 </script>
-
-<style scoped>
-/* Styles spécifiques à la page Home */
-.home-container {
-  position: relative;
-  height: 100vh;
-  overflow: hidden;
-}
-
-.background-image {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  /* Image de fond (ajustez le chemin d'accès à votre image) */
-  background-image: url('@/assets/weather-background.jpg');
-  background-size: cover;
-  background-position: center;
-  opacity: 0.7;
-}
-
-.content {
-  position: relative;
-  z-index: 1;
-  padding: 20px;
-  color: #fff;
-}
-
-h1 {
-  text-align: center;
-}
-
-
-</style>

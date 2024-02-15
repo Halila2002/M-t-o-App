@@ -15,8 +15,9 @@
 
 
 import axios from 'axios';
-
+ 
 export default {
+ 
   // Vos autres options de composant
 
   methods: {
@@ -28,7 +29,8 @@ export default {
 
         const response = await axios.get(apiUrl);
 
-        // Traitez les données de réponse ici
+        // Traitez les données de réponse ici.
+        wx   
         console.log(response.data);
       } catch (error) {
         // Gérez les erreurs ici

@@ -4,7 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap';
 
-import HomePage from '../views/searchBar.vue'
+import HomeWiew from '../views/home.vue'
 
 
 
@@ -14,7 +14,7 @@ const routes = [
     path: '/',
     name: 'home',
     component:  
-     HomePage
+    HomeWiew
   },
   {
     path: '/about',
